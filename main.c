@@ -194,7 +194,7 @@ void update_symbol_with_expression(char* name, struct expression_t* e) {
 #define REPEAT_PREFIX "repeat_"
 #define MAX_SYMBOL_NAME 0x100
 struct expression_t* string_to_expression(char* s) {
-	tagged_ptr_t* symbols = NULL;
+	tagged_ptr_t* symbols = calloc(1, sizeof(*symbols));
 
 	tagged_ptr_t cur_symbol;
 	char* cur_char = s;
@@ -324,6 +324,7 @@ uintptr_t* gen_log(struct symbol_t* target) {
 		zta_push_back(&log, (void*)decision.idx + 1); //cannot let idx be stored as 0, since we are using zta
 
 		cur_expansion = decision.ptr;
+		i = 0;
 		while(cur_expansion->symbols[i]) i++;
 		if(i + sp > STACK_LIMIT) goto BAIL;
 
@@ -362,6 +363,7 @@ void print_log(struct symbol_t* target, uintptr_t* log) {
 		decision_idx = log[log_idx++];
 
 		cur_expansion = cur_sym->expression_options[decision_idx - 1];
+		i = 0;
 		while(cur_expansion->symbols[i]) i++;
 		if(i + sp > STACK_LIMIT) return;
 
@@ -407,6 +409,7 @@ uintptr_t* mut_log(struct symbol_t* target, uintptr_t* old_log) {
 			cur_expansion = decision.ptr;
 		}
 
+		i = 0;
 		while(cur_expansion->symbols[i]) i++;
 		if(i + sp > STACK_LIMIT) goto BAIL;
 
